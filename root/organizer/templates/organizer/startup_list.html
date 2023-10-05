@@ -5,7 +5,7 @@
 {{ block.super }} - {{ tag.name|title }}
 {% endblock %}
 
-{% block content %}
+{% block org_content %}
    <h2>Startup List</h2>
         <ul>
             {% for startup in startup_list %}
@@ -13,5 +13,21 @@
             {% empty %}
             <li><em>No Startups Available</em></li>
             {% endfor %}
+            <li>Page {{ startup_list.number }} of {{ paginator.num_pages }} </li>
         </ul>
+        
+        {% if is_paginated %}
+            <ul>
+                {% if previous_page_url %}
+                <li><a href="{{ previous_page_url }}">Previous</a></li>
+                {% endif %}
+                {% if next_page_url %}
+                <li><a href="{{ next_page_url }}"> Next</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+        
+        {% block create_button %}
+        <a href="{% url 'organizer_startup_create' %}">Create New Startup</a>
+        {% endblock %}
 {% endblock %}

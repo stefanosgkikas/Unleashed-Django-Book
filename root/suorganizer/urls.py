@@ -16,14 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import redirect_root
+#from .views import redirect_root
+from django.views.generic import RedirectView, TemplateView
+from django.conf.urls.static import static
+from django.conf import settings
+
+
 
 urlpatterns = [
-    path('', redirect_root),
+    path('', RedirectView.as_view(pattern_name='blog_post_list', permanent=False)),
     path('', include('organizer.urls')),
+    path('about/', TemplateView.as_view(template_name='site/about.html'), name='about_site'),
+    path('pages/', include('django.contrib.flatpages.urls')),
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
-]
+    path('contact/', include('contact.urls')),  
+    #path('user/', include(user_urls, app_name='user', namespace='dj-auth')), 
+    path('', include('user.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = 'Startup Organizer Admin'
 admin.site.site_title = 'Startup Organizer'

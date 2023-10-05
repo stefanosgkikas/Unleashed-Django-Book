@@ -11,10 +11,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -23,10 +28,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-dm##^_lxce2xsh2%eb&6-8_t=9-v(xzak+!mf_$%6*y-jsb5s3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+SITE_ID = 1
 
+ALLOWED_HOSTS = ['*']
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SERVER_EMAIL = 'stefanos@aua.gr'
+DEFAULT_FROM_EMAIL = 'no-reply@django-unleashed.com'
+EMAIL_SUBJECT_PREFIX = '[Startup Organizer] '
+MANAGERS = (
+ ('Us', 'ourselves@django-unleashed.com'),
+ )
 
 # Application definition
 
@@ -36,9 +50,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.flatpages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'blog',
     'organizer',
+    'contact',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+    ]
 
 ROOT_URLCONF = 'suorganizer.urls'
 
@@ -86,6 +104,19 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # Add other authentication backends if needed
+]
+
+# Define login and logout URLs
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
+LOGIN_REDIRECT_URL = '/profile/'
+
+# Custom User Authorization
+#AUTH_USER_MODEL = "user.CustomUser"
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -118,8 +149,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [BASE_DIR, "static",]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

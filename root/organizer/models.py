@@ -12,7 +12,13 @@ class Tag(models.Model):
           ordering = ['name'] 
 
     def get_absolute_url(self):
-        return reverse('organizer_tag_detail', kwargs={'slug': self.slug})       
+        return reverse('organizer_tag_detail', kwargs={'slug': self.slug})  
+
+    def get_update_url(self):
+        return reverse('organizer_tag_update', kwargs={'slug': self.slug})  
+
+    def get_delete_url(self):
+        return reverse('organizer_tag_delete', kwargs={'slug': self.slug})    
 
 class Startup(models.Model):
     name = models.CharField(max_length=31, db_index=True)
@@ -21,7 +27,7 @@ class Startup(models.Model):
     founded_date = models.DateField('date founded')
     contact = models.EmailField()
     website = models.URLField(max_length=255)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return self.name
@@ -29,9 +35,18 @@ class Startup(models.Model):
     class Meta:
           ordering = ['name']
           get_latest_by = 'founded_date'
+          permissions = [
+            ("startup_create", "Can Create Startup"),
+            ]
 
     def get_absolute_url(self):
-        return reverse('organizer_startup_detail', kwargs={'slug': self.slug})       
+        return reverse('organizer_startup_detail', kwargs={'slug': self.slug}) 
+
+    def get_update_url(self):
+        return reverse('organizer_startup_update', kwargs={'slug': self.slug})
+
+    def get_delete_url(self):
+        return reverse('organizer_startup_delete', kwargs={'slug': self.slug})      
 
 class NewsLink(models.Model):
     title = models.CharField(max_length=63)
@@ -42,7 +57,17 @@ class NewsLink(models.Model):
     def __str__(self):
         return "{} : {}".format(self.title, self.startup)
     
+    def get_absolute_url(self):
+        return self.startup.get_absolute_url()
+    
+    def get_update_url(self):
+        return reverse('organizer_newslink_update', kwargs={'pk': self.pk}) 
+
+    def get_delete_url(self):
+        return reverse('organizer_newslink_delete', kwargs={'pk': self.pk})   
+    
     class Meta:
           verbose_name = 'News Article'
           ordering = ['-pub_date']
           get_latest_by = 'pub_date'
+          
